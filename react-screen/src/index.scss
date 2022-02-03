@@ -1,0 +1,302 @@
+@font-face {
+    font-family: "Poppins";
+    src: local("Poppins"), url(./fonts/Poppins-Regular.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Poppins";
+    font-weight: 500;
+    src: local("Poppins"), url(./fonts/Poppins-Medium.ttf) format("truetype");
+}
+
+*,
+::after,
+::before,
+button {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Poppins";
+}
+body,
+html,
+#root {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+:root {
+    --body-color: #333333;
+    --side-bar-color: #3a3a3a;
+    --palette-hover-color: #242424;
+    --palette-active-color: var(--body-color);
+    --color-code-color: #454545;
+    --primary-text-color: white;
+    --secondary-text-color: #b5b5b5;
+    --transition-time: 0.1s;
+}
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+    border-radius: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--side-bar-color);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(223, 223, 223);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(175, 175, 175);
+}
+#root {
+    overflow: hidden;
+    .context-menu {
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
+        transition: all 100ms ease-in-out;
+        z-index: 10;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 0.25rem;
+        padding: 0.15rem 0rem;
+        list-style: none;
+        border: 1px solid black;
+        background-color: #242424;
+        user-select: none;
+        &.active {
+            opacity: 1;
+            pointer-events: all;
+            visibility: visible;
+        }
+        li {
+            cursor: pointer;
+            padding: 0rem 0.5rem;
+            height: 35px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            svg {
+                fill: white;
+                width: 20px;
+                margin-right: 0.5rem;
+            }
+            span {
+                font-size: 14px;
+            }
+            &:hover {
+                background: #4d4d4d;
+            }
+        }
+        & > * {
+            color: white;
+        }
+    }
+    .copy-message {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 1.25rem 0rem;
+        align-items: center;
+        position: absolute;
+        bottom: -64px;
+        left: 0;
+        background-color: #006dc1;
+        z-index: 10;
+        user-select: none;
+        transition: all var(--transition-time) ease-in-out;
+        svg {
+            width: 20px;
+            margin-right: 0.5rem;
+            fill: white;
+        }
+        p {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+        }
+        &.active {
+            bottom: 0px;
+        }
+    }
+    display: flex;
+    .left-wrapper {
+        height: 100%;
+        width: 70px;
+        background-color: var(--side-bar-color);
+        display: flex;
+        flex-direction: column;
+        .eye-dropper-wrapper {
+            height: 100%;
+            max-height: 40px;
+            button {
+                cursor: pointer;
+                width: 100%;
+                height: 100%;
+                background-color: transparent;
+                border: none;
+                outline: none;
+                transition: all var(--transition-time) ease-in-out;
+                svg {
+                    fill: white;
+                }
+                &:hover {
+                    background-color: var(--palette-hover-color);
+                }
+            }
+        }
+        .color-palette {
+            height: 100%;
+            overflow-y: auto;
+            .color-wrapper {
+                width: 100%;
+                height: auto;
+                padding: 0.65rem 0rem;
+                transition: all var(--transition-time) ease-in-out;
+                position: relative;
+                .color {
+                    --size: 25px;
+                    width: var(--size);
+                    height: var(--size);
+                    border-radius: 0.25rem;
+                    margin: 0px auto;
+                    background-color: red;
+                }
+                &:hover {
+                    background-color: var(--palette-hover-color);
+                }
+                &.active {
+                    background-color: var(--palette-active-color);
+                }
+            }
+        }
+    }
+    .right-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--body-color);
+        padding: 1rem;
+        .no-color {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            svg {
+                --size: 60px;
+                width: var(--size);
+                height: var(--size);
+                fill: #6b6b6b;
+                margin-bottom: 0.8rem;
+            }
+            p {
+                font-size: 14px;
+                font-weight: 500;
+                text-align: center;
+                color: #6b6b6b;
+            }
+        }
+        .color-palette {
+            overflow: hidden;
+            border-radius: 0.5rem;
+            width: 100%;
+            height: 100%;
+            max-height: 120px;
+            display: flex;
+            .color {
+                cursor: pointer;
+                transition: all var(--transition-time) ease-in;
+                flex: 1;
+                position: relative;
+                p {
+                    text-transform: uppercase;
+                    opacity: 0;
+                    position: absolute;
+                    width: 100%;
+                    text-align: center;
+                    top: 50%;
+                    margin-top: -7px;
+                    transition: all var(--transition-time) ease-in;
+                    color: black;
+                    font-size: 14px;
+                    font-weight: 500;
+                    &.isDark {
+                        color: black;
+                    }
+                    &.isLite {
+                        color: white;
+                    }
+                }
+                &:hover {
+                    flex: 2;
+                }
+                &:hover p {
+                    opacity: 1;
+                }
+            }
+        }
+        .color-code-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            .color-code-palette {
+                --height: 35px;
+                overflow: hidden;
+                border-radius: 0.25rem;
+                margin: 1.25rem 0rem;
+                background-color: var(--color-code-color);
+                height: var(--height);
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                & > * {
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                .color-code-type {
+                    user-select: none;
+                    color: var(--secondary-text-color);
+                    padding-left: 0.75rem;
+                    width: 100%;
+                    max-width: 80px;
+                }
+                .color-code {
+                    width: 100%;
+                    color: var(--primary-text-color);
+                }
+                .copy-btn {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                    width: 100%;
+                    height: 100%;
+                    background-color: transparent;
+                    border: none;
+                    outline: none;
+                    transition: all var(--transition-time) ease-in-out;
+                    max-width: var(--height);
+                    svg {
+                        width: 15px;
+                        fill: var(--secondary-text-color);
+                    }
+                    &:hover {
+                        background-color: #4d4d4d;
+                    }
+                }
+            }
+        }
+    }
+}

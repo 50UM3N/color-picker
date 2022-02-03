@@ -1,0 +1,14 @@
+{
+    "name": "color-picker",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^17.0.0"
+    }
+}
