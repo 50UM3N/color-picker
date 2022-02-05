@@ -1,0 +1,66 @@
+{
+    "applicationId": "js.neutralino.colorpicker",
+    "version": "1.0.0",
+    "defaultMode": "window",
+    "port": 0,
+    "documentRoot": "/resources/",
+    "url": "/",
+    "enableServer": true,
+    "enableNativeAPI": true,
+    "tokenSecurity": "one-time",
+    "logging": {
+        "enabled": true,
+        "writeToLogFile": true
+    },
+    "nativeAllowList": ["app.*", "os.*"],
+    "globalVariables": {
+        "TEST1": "Hello",
+        "TEST2": [2, 4, 5],
+        "TEST3": {
+            "value1": 10,
+            "value2": {}
+        }
+    },
+    "modes": {
+        "window": {
+            "title": "Color Picker",
+            "width": 456,
+            "height": 389,
+            "minWidth": 440,
+            "minHeight": 350,
+            "maxWidth": 440,
+            "maxHeight": 350,
+            "fullScreen": false,
+            "alwaysOnTop": false,
+            "icon": "/resources/appIcon.png",
+            "enableInspector": true,
+            "borderless": false,
+            "maximize": false,
+            "hidden": false,
+            "resizable": false,
+            "exitProcessOnClose": true
+        },
+        "chrome": {
+            "width": 456,
+            "height": 389
+        },
+        "browser": {
+            "globalVariables": {
+                "TEST": "Test value browser"
+            },
+            "nativeBlockList": ["filesystem.*"]
+        },
+        "cloud": {
+            "url": "/resources/#cloud",
+            "nativeAllowList": ["app.*"]
+        }
+    },
+    "cli": {
+        "binaryName": "colorpicker",
+        "resourcesPath": "/resources/",
+        "extensionsPath": "/extensions/",
+        "clientLibrary": "/resources/neutralino.js",
+        "binaryVersion": "4.3.0",
+        "clientVersion": "3.2.0"
+    }
+}
