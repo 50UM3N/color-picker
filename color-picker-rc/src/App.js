@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { ReactComponent as CopySvg } from "./svg/copy.svg";
 import { ReactComponent as EyeDropperSvg } from "./svg/eyeDropper.svg";
 import { ReactComponent as TrashSvg } from "./svg/trash.svg";
+import { ReactComponent as SettingSvg } from "./svg/settings.svg";
+import { ReactComponent as CloseSvg } from "./svg/close.svg";
 import {
     hexToRgb,
     hexToHSL,
@@ -141,36 +143,51 @@ function App() {
                 </div>
             </div>
             <div className="right-wrapper">
-                {usedColor.length == 0 ? (
-                    <div className="no-color">
-                        <EyeDropperSvg />
-                        <p>
-                            Press the Color Picker icon to capture a color from
-                            your screen.
-                        </p>
+                <div className="header">
+                    <div className="mover">
+                        <div></div>
                     </div>
-                ) : (
-                    <>
-                        <ColorsPalette colors={colorPalette} />
-                        <div className="color-code-wrapper">
-                            <ColorCode
-                                type="HEX"
-                                colorCode={selectedColor.hex}
-                                copy={handleCopyToClipboard}
-                            />
-                            <ColorCode
-                                type="RGB"
-                                colorCode={selectedColor.rgb}
-                                copy={handleCopyToClipboard}
-                            />
-                            <ColorCode
-                                type="HSL"
-                                colorCode={selectedColor.hsl}
-                                copy={handleCopyToClipboard}
-                            />
+                    <div className="windows-manager-wrapper">
+                        <button className="setting-btn">
+                            <SettingSvg />
+                        </button>
+                        <button className="close-btn">
+                            <CloseSvg />
+                        </button>
+                    </div>
+                </div>
+                <div className="component-outer-wrapper">
+                    {usedColor.length == 0 ? (
+                        <div className="no-color">
+                            <EyeDropperSvg />
+                            <p>
+                                Press the Color Picker icon to capture a color
+                                from your screen.
+                            </p>
                         </div>
-                    </>
-                )}
+                    ) : (
+                        <>
+                            <ColorsPalette colors={colorPalette} />
+                            <div className="color-code-wrapper">
+                                <ColorCode
+                                    type="HEX"
+                                    colorCode={selectedColor.hex}
+                                    copy={handleCopyToClipboard}
+                                />
+                                <ColorCode
+                                    type="RGB"
+                                    colorCode={selectedColor.rgb}
+                                    copy={handleCopyToClipboard}
+                                />
+                                <ColorCode
+                                    type="HSL"
+                                    colorCode={selectedColor.hsl}
+                                    copy={handleCopyToClipboard}
+                                />
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
         </>
     );
