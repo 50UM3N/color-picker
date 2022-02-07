@@ -12,7 +12,7 @@
         "enabled": true,
         "writeToLogFile": true
     },
-    "nativeAllowList": ["app.*", "os.*"],
+    "nativeAllowList": ["app.*", "os.*", "filesystem.*", "extensions.*"],
     "globalVariables": {
         "TEST1": "Hello",
         "TEST2": [2, 4, 5],
@@ -26,33 +26,16 @@
             "title": "Color Picker",
             "width": 456,
             "height": 389,
-            "minWidth": 440,
-            "minHeight": 350,
-            "maxWidth": 440,
-            "maxHeight": 350,
             "fullScreen": false,
             "alwaysOnTop": false,
             "icon": "/resources/appIcon.png",
             "enableInspector": true,
-            "borderless": false,
+            "borderless": true,
             "maximize": false,
             "hidden": false,
             "resizable": false,
-            "exitProcessOnClose": true
-        },
-        "chrome": {
-            "width": 456,
-            "height": 389
-        },
-        "browser": {
-            "globalVariables": {
-                "TEST": "Test value browser"
-            },
-            "nativeBlockList": ["filesystem.*"]
-        },
-        "cloud": {
-            "url": "/resources/#cloud",
-            "nativeAllowList": ["app.*"]
+            "exitProcessOnClose": true,
+            "nativeAllowList": ["app.*", "os.*", "filesystem.*", "extensions.*"]
         }
     },
     "cli": {

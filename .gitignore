@@ -11,4 +11,4 @@ sample
 # Neutralinojs related files
 .storage
 *.log
-resources/*
+resources

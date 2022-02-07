@@ -40,7 +40,7 @@ function App() {
                     index: 0,
                     hex: result.sRGBHex,
                     rgb: hexToRgb(result.sRGBHex),
-                    hsl: hexToHSL(result.sRGBHex),
+                    hsl: hexToHSL(result.sRGBHex)[0],
                 });
                 setUsedColor((state) => [result.sRGBHex, ...state]);
             })
@@ -69,7 +69,11 @@ function App() {
         });
     };
     const handleContextMenuClose = () => {
-        setContextMenuOpen({ open: false, X: 0, Y: 0 });
+        setContextMenuOpen({
+            open: false,
+            X: 0,
+            Y: 0,
+        });
     };
     const handleColorDelete = (index) => {
         setSelectedColor({
@@ -82,7 +86,7 @@ function App() {
     };
     const generateColorPalette = (hex) => {
         let arr = [];
-        let [h, s, l] = hexToHSL(hex)[1];
+        let [h, s] = hexToHSL(hex)[1];
         let counter = 11;
         for (let i = 0; i < 8; i++) {
             arr.push(hslToHex(h, s, counter));
@@ -98,9 +102,24 @@ function App() {
         }
         return Promise.reject("The Clipboard API is not available.");
     };
+    const onWindowClose = () => {
+        window.Neutralino.app.exit();
+    };
     useEffect(() => {
-        document.onclick = handleContextMenuClose;
+        // window.Neutralino.init();
+        window.Neutralino.events.on("windowClose", () =>
+            window.Neutralino.app.exit()
+        );
+        window.Neutralino.window
+            .setDraggableRegion("titleBar")
+            .then((d) => {
+                console.log(d);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
     }, []);
+
     return (
         <>
             {contextMenuOpen.open && (
@@ -108,6 +127,7 @@ function App() {
                     handleDelete={() =>
                         handleColorDelete(contextMenuOpen.index)
                     }
+                    handleContextMenuClose={handleContextMenuClose}
                     style={{
                         top: `${contextMenuOpen.Y}px`,
                         left: `${contextMenuOpen.X}px`,
@@ -144,20 +164,23 @@ function App() {
             </div>
             <div className="right-wrapper">
                 <div className="header">
-                    <div className="mover">
+                    <div className="mover" id="titleBar">
                         <div></div>
                     </div>
                     <div className="windows-manager-wrapper">
-                        <button className="setting-btn">
+                        <button
+                            className="setting-btn"
+                            onClick={handleContextMenuClose}
+                        >
                             <SettingSvg />
                         </button>
-                        <button className="close-btn">
+                        <button className="close-btn" onClick={onWindowClose}>
                             <CloseSvg />
                         </button>
                     </div>
                 </div>
                 <div className="component-outer-wrapper">
-                    {usedColor.length == 0 ? (
+                    {usedColor.length === 0 ? (
                         <div className="no-color">
                             <EyeDropperSvg />
                             <p>
@@ -212,7 +235,7 @@ const CopyMessage = ({ setCopyMessage }) => {
             clearTimeout(timeout1);
             clearTimeout(timeout2);
         };
-    }, []);
+    }, [setCopyMessage]);
 
     return (
         <div className="copy-message" ref={ref}>
@@ -222,13 +245,15 @@ const CopyMessage = ({ setCopyMessage }) => {
     );
 };
 
-const ContextMenu = ({ style, handleDelete }) => {
+const ContextMenu = ({ style, handleDelete, handleContextMenuClose }) => {
     const ref = useRef(null);
     useEffect(() => {
-        setTimeout(() => {
-            ref.current.classList.add("active");
-        }, 1);
-    }, []);
+        document.onclick = handleContextMenuClose;
+        ref.current.classList.add("active");
+        return () => {
+            document.onclick = null;
+        };
+    }, [handleContextMenuClose]);
 
     return (
         <ul ref={ref} className="context-menu" style={style}>
