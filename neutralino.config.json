@@ -7,20 +7,6 @@
     "url": "/",
     "enableServer": true,
     "enableNativeAPI": true,
-    "tokenSecurity": "one-time",
-    "logging": {
-        "enabled": true,
-        "writeToLogFile": true
-    },
-    "nativeAllowList": ["app.*", "os.*", "filesystem.*", "extensions.*"],
-    "globalVariables": {
-        "TEST1": "Hello",
-        "TEST2": [2, 4, 5],
-        "TEST3": {
-            "value1": 10,
-            "value2": {}
-        }
-    },
     "modes": {
         "window": {
             "title": "Color Picker",
@@ -28,14 +14,14 @@
             "height": 389,
             "fullScreen": false,
             "alwaysOnTop": false,
-            "icon": "/resources/appIcon.png",
+            "icon": "/resources/appIcon.ico",
             "enableInspector": true,
             "borderless": true,
             "maximize": false,
             "hidden": false,
             "resizable": false,
             "exitProcessOnClose": true,
-            "nativeAllowList": ["app.*", "os.*", "filesystem.*", "extensions.*"]
+            "nativeAllowList": ["app.*", "storage.*", "window.*"]
         }
     },
     "cli": {

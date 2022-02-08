@@ -276,6 +276,15 @@ html,
                 transition: all var(--transition-time) ease-in;
                 flex: 1;
                 position: relative;
+                svg {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate3d(-50%, -50%, 0) scale(0);
+                    width: 24px;
+                    visibility: hidden;
+                    transition: all 0.25s cubic-bezier(0.3, 0.4, 0, 1);
+                }
                 p {
                     text-transform: uppercase;
                     opacity: 0;
@@ -288,18 +297,38 @@ html,
                     color: black;
                     font-size: 14px;
                     font-weight: 500;
-                    &.isDark {
-                        color: black;
-                    }
-                    &.isLite {
-                        color: white;
-                    }
                 }
                 &:hover {
                     flex: 2;
                 }
                 &:hover p {
                     opacity: 1;
+                }
+                &.is-copied {
+                    svg {
+                        visibility: visible;
+                        transform: translate3d(-50%, -50%, 0) scale(1);
+                    }
+                    p {
+                        opacity: 0 !important;
+                        transition: none !important;
+                    }
+                }
+                &.isDark {
+                    svg {
+                        fill: black;
+                    }
+                    p {
+                        color: black;
+                    }
+                }
+                &.isLite {
+                    svg {
+                        fill: white;
+                    }
+                    p {
+                        color: white;
+                    }
                 }
             }
         }

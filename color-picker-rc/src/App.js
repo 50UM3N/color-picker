@@ -3,6 +3,7 @@ import { ReactComponent as CopySvg } from "./svg/copy.svg";
 import { ReactComponent as EyeDropperSvg } from "./svg/eyeDropper.svg";
 import { ReactComponent as TrashSvg } from "./svg/trash.svg";
 import { ReactComponent as SettingSvg } from "./svg/settings.svg";
+import { ReactComponent as DoneSvg } from "./svg/done.svg";
 import { ReactComponent as CloseSvg } from "./svg/close.svg";
 import {
     hexToRgb,
@@ -12,7 +13,6 @@ import {
 } from "./utils/colorUtil";
 
 function App() {
-    const [colorPalette, setColorPalette] = useState([]);
     const [usedColor, setUsedColor] = useState([]);
     const [selectedColor, setSelectedColor] = useState({
         index: 0,
@@ -34,8 +34,7 @@ function App() {
         const eyeDropper = new window.EyeDropper();
         eyeDropper
             .open()
-            .then((result) => {
-                generateColorPalette(result.sRGBHex);
+            .then(async (result) => {
                 setSelectedColor({
                     index: 0,
                     hex: result.sRGBHex,
@@ -43,6 +42,10 @@ function App() {
                     hsl: hexToHSL(result.sRGBHex)[0],
                 });
                 setUsedColor((state) => [result.sRGBHex, ...state]);
+                await window.Neutralino.storage.setData(
+                    "colors", // key
+                    JSON.stringify([result.sRGBHex, ...usedColor]) // value
+                );
             })
             .catch((e) => {
                 console.log(e);
@@ -50,7 +53,6 @@ function App() {
     };
     const handleColorSelect = (index) => {
         handleContextMenuClose();
-        generateColorPalette(usedColor[index]);
         setSelectedColor({
             index,
             hex: usedColor[index],
@@ -84,16 +86,6 @@ function App() {
         });
         setUsedColor((state) => state.filter((item, i) => i !== index));
     };
-    const generateColorPalette = (hex) => {
-        let arr = [];
-        let [h, s] = hexToHSL(hex)[1];
-        let counter = 11;
-        for (let i = 0; i < 8; i++) {
-            arr.push(hslToHex(h, s, counter));
-            counter += 11;
-        }
-        setColorPalette(arr);
-    };
 
     const handleCopyToClipboard = (str) => {
         if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
@@ -106,18 +98,39 @@ function App() {
         window.Neutralino.app.exit();
     };
     useEffect(() => {
+        // initialize the Neutralino js only for the build not in browser
         // window.Neutralino.init();
+        // disabling the right click only for build not in browser
+        // document.addEventListener("contextmenu", (event) =>
+        //     event.preventDefault()
+        // );
+        (async () => {
+            // getting the colors from the storage
+            let colors = null;
+            try {
+                colors = await window.Neutralino.storage.getData("colors");
+            } catch (err) {
+                console.log(err);
+            }
+            // check that the colors is not null i.e color is present in the storage or not
+            if (colors !== null) {
+                colors = JSON.parse(colors);
+                // setting the current picked color
+                setSelectedColor({
+                    index: 0, // current/ top index
+                    hex: colors[0], // hex color return from EyeDropper tool
+                    rgb: hexToRgb(colors[0]), // converting the color to RGB
+                    hsl: hexToHSL(colors[0])[0], // converting the color to HSL
+                });
+                // setting the new color to the color list
+                setUsedColor([...colors]);
+            }
+            // set draggable for the custom titleBar
+            await window.Neutralino.window.setDraggableRegion("titleBar");
+        })();
         window.Neutralino.events.on("windowClose", () =>
             window.Neutralino.app.exit()
         );
-        window.Neutralino.window
-            .setDraggableRegion("titleBar")
-            .then((d) => {
-                console.log(d);
-            })
-            .catch((e) => {
-                console.log(e);
-            });
     }, []);
 
     return (
@@ -190,7 +203,10 @@ function App() {
                         </div>
                     ) : (
                         <>
-                            <ColorsPalette colors={colorPalette} />
+                            <ColorsPalette
+                                color={selectedColor.hex}
+                                setCopyMessage={setCopyMessage}
+                            />
                             <div className="color-code-wrapper">
                                 <ColorCode
                                     type="HEX"
@@ -277,18 +293,45 @@ const ColorCode = ({ type, colorCode, copy }) => {
     );
 };
 
-const ColorsPalette = ({ colors }) => {
+const ColorsPalette = ({ color, setCopyMessage }) => {
+    const [colorPalette, setColorPalette] = useState([]);
+    const colorRef = useRef([]);
+    const handleColorCopy = (index, str) => {
+        colorRef.current[index].classList.add("is-copied");
+        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+            setCopyMessage(true);
+            return navigator.clipboard.writeText(str);
+        }
+        return Promise.reject("The Clipboard API is not available.");
+    };
+    const mouseHoverOut = (index) => {
+        colorRef.current[index].classList.remove("is-copied");
+    };
+    useEffect(() => {
+        let arr = [];
+        let [h, s] = hexToHSL(color)[1];
+        let counter = 11;
+        for (let i = 0; i < 8; i++) {
+            arr.push(hslToHex(h, s, counter));
+            counter += 11;
+        }
+        setColorPalette(arr);
+    }, [color]);
     return (
         <div className="color-palette">
-            {colors.map((item) => (
+            {colorPalette.map((item, index) => (
                 <div
-                    key={Math.random()}
-                    className="color"
+                    key={index}
+                    className={`color ${
+                        checkTextColor(item) ? "isDark" : "isLite"
+                    }`}
                     style={{ backgroundColor: item }}
+                    ref={(el) => (colorRef.current[index] = el)}
+                    onClick={() => handleColorCopy(index, item)}
+                    onMouseOut={() => mouseHoverOut(index)}
                 >
-                    <p className={checkTextColor(item) ? "isDark" : "isLite"}>
-                        {item.split("#")[1]}
-                    </p>
+                    <DoneSvg />
+                    <p>{item.split("#")[1]}</p>
                 </div>
             ))}
         </div>

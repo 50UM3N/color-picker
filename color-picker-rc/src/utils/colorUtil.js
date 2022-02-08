@@ -30,7 +30,7 @@ const hexToHSL = (hex) => {
     } else if (cMax === b) {
         h = 60 * ((r - g) / del + 4);
     }
-    if (del == 0) {
+    if (del === 0) {
         s = 0;
     } else {
         s = del / (1 - Math.abs(2 * l - 1));
@@ -76,9 +76,9 @@ const hslToHex = (h, s, l) => {
     r = Math.round((r + m) * 255).toString(16);
     g = Math.round((g + m) * 255).toString(16);
     b = Math.round((b + m) * 255).toString(16);
-    r = r.length == 1 ? `0${r}` : r;
-    g = g.length == 1 ? `0${g}` : g;
-    b = b.length == 1 ? `0${b}` : b;
+    r = r.length === 1 ? `0${r}` : r;
+    g = g.length === 1 ? `0${g}` : g;
+    b = b.length === 1 ? `0${b}` : b;
     return "#" + r + g + b;
 };
 const checkTextColor = (hex) => {
