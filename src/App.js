@@ -5,6 +5,7 @@ import { ReactComponent as TrashSvg } from "./svg/trash.svg";
 import { ReactComponent as SettingSvg } from "./svg/settings.svg";
 import { ReactComponent as DoneSvg } from "./svg/done.svg";
 import { ReactComponent as CloseSvg } from "./svg/close.svg";
+import { appWindow } from "@tauri-apps/api/window";
 import {
     hexToRgb,
     hexToHSL,
@@ -42,7 +43,7 @@ function App() {
                     hsl: hexToHSL(result.sRGBHex)[0],
                 });
                 setUsedColor((state) => [result.sRGBHex, ...state]);
-                await window.Neutralino.storage.setData(
+                window.localStorage.setItem(
                     "colors", // key
                     JSON.stringify([result.sRGBHex, ...usedColor]) // value
                 );
@@ -57,7 +58,7 @@ function App() {
             index,
             hex: usedColor[index],
             rgb: hexToRgb(usedColor[index]),
-            hsl: hexToHSL(usedColor[index]),
+            hsl: hexToHSL(usedColor[index])[0],
         });
     };
     const handleContextMenuOpen = (e, index) => {
@@ -78,12 +79,13 @@ function App() {
         });
     };
     const handleColorDelete = (index) => {
-        setSelectedColor({
-            index: 0,
-            hex: usedColor[index],
-            rgb: hexToRgb(usedColor[index]),
-            hsl: hexToHSL(usedColor[index]),
-        });
+        if (index === selectedColor.index)
+            setSelectedColor({
+                index: 0,
+                hex: usedColor[0],
+                rgb: hexToRgb(usedColor[0]),
+                hsl: hexToHSL(usedColor[0])[0],
+            });
         setUsedColor((state) => state.filter((item, i) => i !== index));
     };
 
@@ -95,23 +97,17 @@ function App() {
         return Promise.reject("The Clipboard API is not available.");
     };
     const onWindowClose = () => {
-        window.Neutralino.app.exit();
+        appWindow.close();
     };
     useEffect(() => {
-        // initialize the Neutralino js only for the build not in browser
-        // window.Neutralino.init();
         // disabling the right click only for build not in browser
         // document.addEventListener("contextmenu", (event) =>
         //     event.preventDefault()
         // );
         (async () => {
             // getting the colors from the storage
-            let colors = null;
-            try {
-                colors = await window.Neutralino.storage.getData("colors");
-            } catch (err) {
-                console.log(err);
-            }
+            // TODO: Implement a store for color
+            let colors = await window.localStorage.getItem("colors");
             // check that the colors is not null i.e color is present in the storage or not
             if (colors !== null) {
                 colors = JSON.parse(colors);
@@ -125,12 +121,7 @@ function App() {
                 // setting the new color to the color list
                 setUsedColor([...colors]);
             }
-            // set draggable for the custom titleBar
-            await window.Neutralino.window.setDraggableRegion("titleBar");
         })();
-        window.Neutralino.events.on("windowClose", () =>
-            window.Neutralino.app.exit()
-        );
     }, []);
 
     return (
@@ -177,7 +168,7 @@ function App() {
             </div>
             <div className="right-wrapper">
                 <div className="header">
-                    <div className="mover" id="titleBar">
+                    <div className="mover" data-tauri-drag-region>
                         <div></div>
                     </div>
                     <div className="windows-manager-wrapper">

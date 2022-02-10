@@ -8,7 +8,13 @@
     font-weight: 500;
     src: local("Poppins"), url(./fonts/Poppins-Medium.ttf) format("truetype");
 }
-
+body {
+    border: 1px solid #4d4f54;
+}
+html,
+body {
+    border-radius: 10px;
+}
 *,
 ::after,
 ::before,
