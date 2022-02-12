@@ -64,7 +64,11 @@ html,
 }
 #root {
     overflow: hidden;
-    .context-menu {
+    .menu {
+        width: 150px;
+    }
+    .context-menu,
+    .menu {
         opacity: 0;
         pointer-events: none;
         visibility: hidden;
@@ -181,6 +185,7 @@ html,
                     border-radius: 0.25rem;
                     margin: 0px auto;
                     background-color: red;
+                    box-shadow: 1px 1px 5px #0000004d;
                 }
                 &:hover {
                     background-color: var(--palette-hover-color);

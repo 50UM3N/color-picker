@@ -5,14 +5,18 @@ import { ReactComponent as TrashSvg } from "./svg/trash.svg";
 import { ReactComponent as SettingSvg } from "./svg/settings.svg";
 import { ReactComponent as DoneSvg } from "./svg/done.svg";
 import { ReactComponent as CloseSvg } from "./svg/close.svg";
+import { ReactComponent as HelpSvg } from "./svg/help.svg";
+import { ReactComponent as ClearSvg } from "./svg/clear.svg";
+import { ReactComponent as GitHubSvg } from "./svg/github.svg";
+import { ReactComponent as InfoSvg } from "./svg/info.svg";
 import { appWindow } from "@tauri-apps/api/window";
+import { open } from "@tauri-apps/api/shell";
 import {
     hexToRgb,
     hexToHSL,
     hslToHex,
     checkTextColor,
 } from "./utils/colorUtil";
-
 function App() {
     const [usedColor, setUsedColor] = useState([]);
     const [selectedColor, setSelectedColor] = useState({
@@ -96,9 +100,6 @@ function App() {
         }
         return Promise.reject("The Clipboard API is not available.");
     };
-    const onWindowClose = () => {
-        appWindow.close();
-    };
     useEffect(() => {
         // disabling the right click only for build not in browser
         // document.addEventListener("contextmenu", (event) =>
@@ -167,22 +168,7 @@ function App() {
                 </div>
             </div>
             <div className="right-wrapper">
-                <div className="header">
-                    <div className="mover" data-tauri-drag-region>
-                        <div></div>
-                    </div>
-                    <div className="windows-manager-wrapper">
-                        <button
-                            className="setting-btn"
-                            onClick={handleContextMenuClose}
-                        >
-                            <SettingSvg />
-                        </button>
-                        <button className="close-btn" onClick={onWindowClose}>
-                            <CloseSvg />
-                        </button>
-                    </div>
-                </div>
+                <TitleBar setUsedColor={setUsedColor} />
                 <div className="component-outer-wrapper">
                     {usedColor.length === 0 ? (
                         <div className="no-color">
@@ -224,6 +210,115 @@ function App() {
 }
 
 export default App;
+
+const TitleBar = ({ setUsedColor }) => {
+    const [menu, setMenu] = useState({
+        active: false,
+        type: null,
+        items: null,
+        X: 0,
+        Y: 0,
+    });
+    const openMenu = (e, target) => {
+        let { offsetHeight, offsetLeft, offsetTop, offsetWidth } =
+            e.currentTarget;
+        let active = true;
+        let items = [];
+        if (menu.active && menu.type === target) active = false;
+        switch (target) {
+            case "setting":
+                items = [
+                    {
+                        name: "Clear List",
+                        icon: <ClearSvg />,
+                        action: () => setUsedColor([]),
+                    },
+                ];
+                break;
+            case "help":
+                items = [
+                    {
+                        name: "Help Online",
+                        icon: <GitHubSvg />,
+                        action: async () =>
+                            await open(
+                                "https://github.com/50UM3N/color-picker"
+                            ),
+                    },
+                    {
+                        name: "About",
+                        icon: <InfoSvg />,
+                        action: async () =>
+                            await open(
+                                "https://github.com/50UM3N/color-picker"
+                            ),
+                    },
+                ];
+                break;
+            default:
+                return;
+        }
+        setMenu({
+            active,
+            X: offsetTop + offsetHeight,
+            Y: offsetLeft + offsetWidth,
+            type: target,
+            items,
+        });
+    };
+    return (
+        <div className="header">
+            <div className="mover" data-tauri-drag-region>
+                <div></div>
+            </div>
+            <div className="windows-manager-wrapper">
+                <button
+                    className="setting-btn"
+                    onClick={(e) => openMenu(e, "help")}
+                >
+                    <HelpSvg />
+                </button>
+                <button
+                    className="setting-btn"
+                    onClick={(e) => openMenu(e, "setting")}
+                >
+                    <SettingSvg />
+                </button>
+                <button className="close-btn" onClick={() => appWindow.close()}>
+                    <CloseSvg />
+                </button>
+            </div>
+            {menu.active && (
+                <Menu
+                    setMenu={setMenu}
+                    items={menu.items}
+                    style={{
+                        top: `${menu.X}px`,
+                        left: `${menu.Y}px`,
+                        transform: "translateX(-100%)",
+                    }}
+                />
+            )}
+        </div>
+    );
+};
+
+const Menu = ({ items, style, setMenu }) => {
+    const ref = useRef(null);
+    useEffect(() => {
+        ref.current.classList.add("active");
+    }, []);
+    return (
+        <ul ref={ref} className="menu" style={style}>
+            {items.map((item, idx) => (
+                <li key={idx} onClick={item.action}>
+                    {item.icon}
+                    <span>{item.name}</span>
+                </li>
+            ))}
+        </ul>
+    );
+};
 
 const CopyMessage = ({ setCopyMessage }) => {
     const ref = useRef(null);
