@@ -18,7 +18,7 @@
 
 # Contributors
 
-<a href="https://github.com/50UM3N/color-picker/graphs/contributors">
+<a href="https://github.com/50UM3N/color-picker/graphs/contributors" >
   <img src="https://contrib.rocks/image?repo=50UM3N/color-picker" />
 </a>
 
